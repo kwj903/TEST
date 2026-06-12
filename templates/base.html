@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; line-height: 1.6; }
+        header { border-bottom: 1px solid #ccc; margin-bottom: 20px; padding-bottom: 10px; }
+        footer { border-top: 1px solid #ccc; margin-top: 40px; padding-top: 20px; text-align: center; color: #666; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>My Static Blog</h1>
+        <nav><a href="index.html">Home</a> | <a href="about.html">About</a></nav>
+    </header>
+    <main>
+        {{ content }}
+    </main>
+    <footer>
+        <p>&copy; 2024 My Static Blog</p>
+    </footer>
+</body>
+</html>
