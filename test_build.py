@@ -64,12 +64,26 @@ def test_xss_in_title():
     with open(output_path, "r", encoding="utf-8") as f:
         content = f.read()
 
-        # Check if the title is properly escaped
-        # The original filename is "xss-&-'test'.md"
-        # title = filename[:-3].replace("-", " ").title() -> "Xss & 'Test'"
-        # Expected escaped HTML: Xss &amp; &#39;Test&#39;
-        assert "&amp;" in content, "The ampersand was not properly escaped!"
-        assert "&#39;" in content, "The single quote was not properly escaped!"
+    # Check if the title is properly escaped
+    # The original filename is "xss-&-'test'.md"
+    # title = filename[:-3].replace("-", " ").title() -> "Xss & 'Test'"
+    # Expected escaped HTML: Xss &amp; &#39;Test&#39;
+    assert "&amp;" in content, "The ampersand was not properly escaped!"
+    assert "&#39;" in content, "The single quote was not properly escaped!"
 
     # Clean up
     os.remove(malicious_path)
+
+def test_build_site_missing_template(monkeypatch, capsys):
+    from jinja2 import Environment
+
+    def mock_get_template(self, name):
+        raise Exception("Mocked template not found")
+
+    monkeypatch.setattr(Environment, "get_template", mock_get_template)
+
+    build_site()
+
+    captured = capsys.readouterr()
+    assert "Warning: Could not load template 'base.html'." in captured.out
+    assert "Mocked template not found" in captured.out
