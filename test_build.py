@@ -41,3 +41,35 @@ def test_build_site():
         content = f.read()
         assert "<title>About</title>" in content
         assert "<h1>About Me</h1>" in content
+
+def test_xss_in_title():
+    # Create a malicious markdown file using a safe filename (e.g., using an ampersand and single quotes)
+    # Characters like <, >, and " are invalid on Windows filesystems.
+    malicious_filename = "xss-&-'test'.md"
+    os.makedirs("content", exist_ok=True)
+    malicious_path = os.path.join("content", malicious_filename)
+
+    with open(malicious_path, "w", encoding="utf-8") as f:
+        f.write("# Malicious Content\nThis is a test.")
+
+    # Run the build function
+    build_site()
+
+    # Verify the output file is created
+    output_filename = "xss-&-'test'.html"
+    output_path = os.path.join("public", output_filename)
+
+    assert os.path.exists(output_path), "The file was not generated"
+
+    with open(output_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+        # Check if the title is properly escaped
+        # The original filename is "xss-&-'test'.md"
+        # title = filename[:-3].replace("-", " ").title() -> "Xss & 'Test'"
+        # Expected escaped HTML: Xss &amp; &#39;Test&#39;
+        assert "&amp;" in content, "The ampersand was not properly escaped!"
+        assert "&#39;" in content, "The single quote was not properly escaped!"
+
+    # Clean up
+    os.remove(malicious_path)

@@ -1,6 +1,7 @@
 import os
 import markdown
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import Environment, FileSystemLoader, select_autoescape
+from markupsafe import Markup
 
 def build_site():
     # Setup directories
@@ -12,7 +13,7 @@ def build_site():
     os.makedirs(output_dir, exist_ok=True)
 
     # Setup Jinja2 environment
-    env = Environment(loader=FileSystemLoader(template_dir))
+    env = Environment(loader=FileSystemLoader(template_dir), autoescape=select_autoescape(['html', 'xml']))
 
     try:
         template = env.get_template("base.html")
@@ -35,7 +36,7 @@ def build_site():
             # Render with template
             # For simplicity, we use the filename without extension as title if needed
             title = filename[:-3].replace("-", " ").title()
-            final_html = template.render(title=title, content=html_content)
+            final_html = template.render(title=title, content=Markup(html_content))
 
             # Write output
             output_filename = filename[:-3] + ".html"
