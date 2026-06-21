@@ -1,6 +1,6 @@
 import os
 import markdown
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import Environment, FileSystemLoader, TemplateNotFound
 
 def build_site():
     # Setup directories
@@ -16,7 +16,7 @@ def build_site():
 
     try:
         template = env.get_template("base.html")
-    except Exception as e:
+    except TemplateNotFound as e:
         print(f"Warning: Could not load template 'base.html'. Ensure it exists in {template_dir}/")
         print(f"Error: {e}")
         return
