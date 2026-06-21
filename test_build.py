@@ -41,3 +41,17 @@ def test_build_site():
         content = f.read()
         assert "<title>About</title>" in content
         assert "<h1>About Me</h1>" in content
+
+def test_build_site_missing_template(monkeypatch, capsys):
+    from jinja2 import Environment
+
+    def mock_get_template(self, name):
+        raise Exception("Mocked template not found")
+
+    monkeypatch.setattr(Environment, "get_template", mock_get_template)
+
+    build_site()
+
+    captured = capsys.readouterr()
+    assert "Warning: Could not load template 'base.html'." in captured.out
+    assert "Mocked template not found" in captured.out
