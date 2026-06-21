@@ -21,6 +21,9 @@ def build_site():
         print(f"Error: {e}")
         return
 
+    # Initialize markdown instance once
+    md = markdown.Markdown()
+
     # Process all markdown files
     for filename in os.listdir(content_dir):
         if filename.endswith(".md"):
@@ -30,7 +33,10 @@ def build_site():
                 md_content = f.read()
 
             # Convert to HTML
-            html_content = markdown.markdown(md_content)
+            html_content = md.convert(md_content)
+
+            # Reset the markdown instance for the next use
+            md.reset()
 
             # Render with template
             # For simplicity, we use the filename without extension as title if needed
