@@ -1,0 +1,8 @@
+import pytest
+from main import main
+
+def test_main(capsys):
+    main()
+    captured = capsys.readouterr()
+    assert captured.out == "Hello from app!\n"
+    assert captured.err == ""
